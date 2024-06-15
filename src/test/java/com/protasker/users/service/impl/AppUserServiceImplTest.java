@@ -12,8 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,12 +63,13 @@ public class AppUserServiceImplTest {
         service.createUser(request);
 
         // then
-        assertThat(expectedResponse).isNotNull();
-        assertThat(expectedResponse.getId()).isEqualTo(1L);
-        assertThat(expectedResponse.getFirstName()).isEqualTo("John");
-        assertThat(expectedResponse.getLastName()).isEqualTo("Doe");
-        assertThat(expectedResponse.getEmail()).isEqualTo("john.doe@example.com");
-
+        assertAll(
+                () -> assertThat(expectedResponse).isNotNull(),
+                () -> assertThat(expectedResponse.getId()).isEqualTo(1L),
+                () -> assertThat(expectedResponse.getFirstName()).isEqualTo("John"),
+                () -> assertThat(expectedResponse.getLastName()).isEqualTo("Doe"),
+                () -> assertThat(expectedResponse.getEmail()).isEqualTo("john.doe@example.com")
+        );
 
         verify(repository, times(1)).save(savedUser);
         verify(mapper, times(1)).toResponseFromEntity(savedUser);
@@ -100,10 +101,12 @@ public class AppUserServiceImplTest {
         AppUserDto userById = service.getUserById(1L);
 
         // then
-        assertThat(userById).isNotNull();
-        assertThat(userById.getId()).isEqualTo(1L);
-        assertThat(userById.getFirstName()).isEqualTo("Jane");
-        assertThat(userById.getLastName()).isEqualTo("Doe");
-        assertThat(userById.getEmail()).isEqualTo("jane.doe@example.com");
+        assertAll(
+                () -> assertThat(userById).isNotNull(),
+                () -> assertThat(userById.getId()).isEqualTo(1L),
+                () -> assertThat(userById.getFirstName()).isEqualTo("Jane"),
+                () -> assertThat(userById.getLastName()).isEqualTo("Doe"),
+                () -> assertThat(userById.getEmail()).isEqualTo("jane.doe@example.com")
+        );
     }
 }
