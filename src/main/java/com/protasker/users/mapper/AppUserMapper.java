@@ -11,4 +11,7 @@ public interface AppUserMapper {
     AppUserDto toDto(AppUser appUser);
     AppUser toEntity(AppUserDto dto);
     CreateAppUserResponse toResponseFromEntity(AppUser savedAppUser);
+    AppUserDto toDtoFromRequest(CreateAppUserRequest request);
+    AppUser toEntityFromDto(AppUserDto dtoFromRequest);
+    CreateAppUserResponse toResponseFromDto(AppUserDto savedDto);
 }

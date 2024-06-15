@@ -1,10 +1,10 @@
-package com.protasker.users;
+package com.protasker.users.controller;
 
 import com.protasker.users.dto.AppUserDto;
-import com.protasker.users.entity.AppUser;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
 import com.protasker.users.service.AppUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -28,12 +28,12 @@ public class AppUserController {
     }
 
     @GetMapping
-    public List<AppUserDto> getUsers() {
+    public List<CreateAppUserResponse> getUsers() {
         return appUserService.getAllUsers();
     }
 
     @PostMapping
-    public CreateAppUserResponse createUser(@RequestBody CreateAppUserRequest request) {
+    public CreateAppUserResponse createUser(@Valid @RequestBody CreateAppUserRequest request) {
         return appUserService.createUser(request);
     }
 }

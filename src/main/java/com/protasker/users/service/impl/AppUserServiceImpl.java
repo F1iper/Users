@@ -23,8 +23,11 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public CreateAppUserResponse createUser(CreateAppUserRequest request) {
-        AppUser save = repository.save(mapper.toEntityFromRequest(request));
-        return mapper.toResponseFromEntity(save);
+        AppUserDto dtoFromRequest = mapper.toDtoFromRequest(request);
+
+        AppUser save = repository.save(mapper.toEntityFromDto(dtoFromRequest));
+        AppUserDto savedDto = mapper.toDto(save);
+        return mapper.toResponseFromDto(savedDto);
     }
 
     @Override
@@ -33,9 +36,10 @@ public class AppUserServiceImpl implements AppUserService {
     }
 
     @Override
-    public List<AppUserDto> getAllUsers() {
+    public List<CreateAppUserResponse> getAllUsers() {
         return repository.findAll().stream()
                 .map(mapper::toDto)
+                .map(mapper::toResponseFromDto)
                 .collect(Collectors.toList());
     }
 

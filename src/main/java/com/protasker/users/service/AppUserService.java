@@ -11,7 +11,7 @@ public interface AppUserService {
 
     CreateAppUserResponse createUser(CreateAppUserRequest request);
     AppUserDto getUserById(Long id);
-    List<AppUserDto> getAllUsers();
+    List<CreateAppUserResponse> getAllUsers();
     AppUserDto updateUser(AppUser appUser, Long id);
     void deleteUser(Long id);
 }
