@@ -1,13 +1,14 @@
 package com.protasker.users.service.impl;
 
-import com.protasker.users.dto.AppUserDto;
 import com.protasker.users.entity.AppUser;
 import com.protasker.users.mapper.AppUserMapper;
 import com.protasker.users.repository.AppUserRepository;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
+import com.protasker.users.response.GetAppUserResponse;
 import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,32 +20,32 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserMapper mapper;
     private final AppUserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
     public CreateAppUserResponse createUser(CreateAppUserRequest request) {
-        AppUserDto dtoFromRequest = mapper.toDtoFromRequest(request);
+        String encryptedPassword = passwordEncoder.encode(request.getPassword());
+        AppUser appUserToSave = mapper.toEntityFromRequest(request);
+        appUserToSave.setEncryptedPassword(encryptedPassword);
 
-        AppUser save = repository.save(mapper.toEntityFromDto(dtoFromRequest));
-        AppUserDto savedDto = mapper.toDto(save);
-        return mapper.toResponseFromDto(savedDto);
+        AppUser save = repository.save(appUserToSave);
+        return mapper.toCreateResponseFromEntity(save);
+    }
+
+    @Override()
+    public GetAppUserResponse getUserById(Long id) {
+        return mapper.toGetResponseFromEntity(repository.getReferenceById(id));
     }
 
     @Override
-    public AppUserDto getUserById(Long id) {
-        return mapper.toDto(repository.getReferenceById(id));
-    }
-
-    @Override
-    public List<CreateAppUserResponse> getAllUsers() {
+    public List<GetAppUserResponse> getAllUsers() {
         return repository.findAll().stream()
-                .map(mapper::toDto)
-                .map(mapper::toResponseFromDto)
+                .map(mapper::toGetResponseFromEntity)
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public AppUserDto updateUser(AppUser appUser, Long id) {
+    public GetAppUserResponse updateUser(AppUser appUser, Long id) {
         // todo: Implement patch
         return null;
     }

@@ -1,8 +1,8 @@
 package com.protasker.users.controller;
 
-import com.protasker.users.dto.AppUserDto;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
+import com.protasker.users.response.GetAppUserResponse;
 import com.protasker.users.service.AppUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +28,13 @@ public class AppUserController {
     }
 
     @GetMapping
-    public List<CreateAppUserResponse> getUsers() {
+    public List<GetAppUserResponse> getUsers() {
         return appUserService.getAllUsers();
+    }
+
+    @GetMapping(params = "/{id}")
+    public GetAppUserResponse getAppUserById (@PathVariable Long id){
+        return appUserService.getUserById(id);
     }
 
     @PostMapping
