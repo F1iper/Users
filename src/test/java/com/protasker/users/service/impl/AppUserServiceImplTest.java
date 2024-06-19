@@ -1,7 +1,6 @@
 package com.protasker.users.service.impl;
 
 import com.protasker.users.entity.AppUser;
-import com.protasker.users.mapper.AppUserMapper;
 import com.protasker.users.repository.AppUserRepository;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
@@ -19,10 +18,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AppUserServiceImplTest {
 
-
-    @Mock
-    private AppUserMapper mapper;
-
     @Mock
     private AppUserRepository repository;
 
@@ -30,6 +25,7 @@ public class AppUserServiceImplTest {
     private AppUserServiceImpl service;
 
 
+    // todo: rewrite tests after adding modelMapper
     @Test
     void shouldCreateCorrectUser() {
         // given
@@ -54,9 +50,9 @@ public class AppUserServiceImplTest {
                 .email("john.doe@example.com")
                 .build();
 
-        when(mapper.toEntityFromRequest(request)).thenReturn(savedUser);
+//        when(mapper.toEntityFromRequest(request)).thenReturn(savedUser);
         when(repository.save(savedUser)).thenReturn(savedUser);
-        when(mapper.toCreateResponseFromEntity(savedUser)).thenReturn(expectedResponse);
+//        when(mapper.toCreateResponseFromEntity(savedUser)).thenReturn(expectedResponse);
 
         // when
         service.createUser(request);
@@ -71,7 +67,7 @@ public class AppUserServiceImplTest {
         );
 
         verify(repository, times(1)).save(savedUser);
-        verify(mapper, times(1)).toCreateResponseFromEntity(savedUser);
+//        verify(mapper, times(1)).toCreateResponseFromEntity(savedUser);
     }
 
     @Test

@@ -32,7 +32,7 @@ public class AppUserController {
         return appUserService.getAllUsers();
     }
 
-    @GetMapping(params = "/{id}")
+    @GetMapping("/{id}")
     public GetAppUserResponse getAppUserById (@PathVariable Long id){
         return appUserService.getUserById(id);
     }

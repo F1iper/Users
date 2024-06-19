@@ -1,12 +1,12 @@
 package com.protasker.users.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GetAppUserResponse {
 
     private Long id;

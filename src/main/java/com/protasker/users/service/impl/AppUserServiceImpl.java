@@ -1,14 +1,14 @@
 package com.protasker.users.service.impl;
 
 import com.protasker.users.entity.AppUser;
-import com.protasker.users.mapper.AppUserMapper;
 import com.protasker.users.repository.AppUserRepository;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
 import com.protasker.users.response.GetAppUserResponse;
 import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,30 +18,35 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AppUserServiceImpl implements AppUserService {
 
-    private final AppUserMapper mapper;
+
     private final AppUserRepository repository;
-    private final PasswordEncoder passwordEncoder;
+    private final ModelMapper mapper;
 
 
     @Override
     public CreateAppUserResponse createUser(CreateAppUserRequest request) {
-        String encryptedPassword = passwordEncoder.encode(request.getPassword());
-        AppUser appUserToSave = mapper.toEntityFromRequest(request);
-        appUserToSave.setEncryptedPassword(encryptedPassword);
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        AppUser save = repository.save(appUserToSave);
-        return mapper.toCreateResponseFromEntity(save);
+        AppUser entity = mapper.map(request, AppUser.class);
+        entity.setEncryptedPassword("encrypted password test");
+
+        repository.save(entity);
+
+        CreateAppUserResponse response = mapper.map(entity, CreateAppUserResponse.class);
+        return response;
     }
 
     @Override()
     public GetAppUserResponse getUserById(Long id) {
-        return mapper.toGetResponseFromEntity(repository.getReferenceById(id));
+        AppUser savedAppUser = repository.getReferenceById(id);
+
+        return mapper.map(savedAppUser, GetAppUserResponse.class);
     }
 
     @Override
     public List<GetAppUserResponse> getAllUsers() {
         return repository.findAll().stream()
-                .map(mapper::toGetResponseFromEntity)
+                .map(appUser -> mapper.map(appUser, GetAppUserResponse.class))
                 .collect(Collectors.toList());
     }
 
