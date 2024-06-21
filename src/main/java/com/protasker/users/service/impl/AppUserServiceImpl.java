@@ -12,6 +12,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,7 @@ public class AppUserServiceImpl implements AppUserService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         AppUser entity = mapper.map(request, AppUser.class);
-        entity.setEncryptedPassword("encrypted password test");
+        entity.setEncryptedPassword(UUID.randomUUID().toString());
 
         repository.save(entity);
 
