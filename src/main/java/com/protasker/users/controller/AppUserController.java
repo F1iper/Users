@@ -36,12 +36,12 @@ public class AppUserController {
     }
 
     @GetMapping
-    public List<GetAppUserResponse> getUsers() {
-        return appUserService.getAllUsers();
+    public ResponseEntity<List<GetAppUserResponse>> getUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(appUserService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public GetAppUserResponse getAppUserById (@PathVariable Long id){
-        return appUserService.getUserById(id);
+    public ResponseEntity<GetAppUserResponse> getAppUserById (@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.FOUND).body(appUserService.getUserById(id));
     }
 }
