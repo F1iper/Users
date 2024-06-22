@@ -30,9 +30,9 @@ public class AppUserController {
     }
 
     @PostMapping
-    public ResponseEntity createUser(@Valid @RequestBody CreateAppUserRequest request) {
+    public ResponseEntity<CreateAppUserResponse> createUser(@Valid @RequestBody CreateAppUserRequest request) {
         CreateAppUserResponse response = appUserService.createUser(request);
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping

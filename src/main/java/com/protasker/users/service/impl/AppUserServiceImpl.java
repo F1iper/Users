@@ -9,6 +9,7 @@ import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     private final AppUserRepository repository;
     private final ModelMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -29,12 +31,11 @@ public class AppUserServiceImpl implements AppUserService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         AppUser entity = mapper.map(request, AppUser.class);
-        entity.setEncryptedPassword(UUID.randomUUID().toString());
+        entity.setEncryptedPassword(passwordEncoder.encode(request.getPassword()));
+        entity.setUserId(UUID.randomUUID().toString());
 
         repository.save(entity);
-
-        CreateAppUserResponse response = mapper.map(entity, CreateAppUserResponse.class);
-        return response;
+        return mapper.map(entity, CreateAppUserResponse.class);
     }
 
     @Override()

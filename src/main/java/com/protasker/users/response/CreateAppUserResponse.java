@@ -9,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class CreateAppUserResponse {
 
-    private Long id;
     private String firstName;
     private String lastName;
     private String email;
+    private String userId;
 }
