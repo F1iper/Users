@@ -9,9 +9,13 @@ import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -60,5 +64,15 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public void deleteUser(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        AppUser appUserEntity = repository.findByEmail(username);
+        if (appUserEntity == null) {
+            throw new UsernameNotFoundException(username);
+        }
+        return new User(appUserEntity.getEmail(), appUserEntity.getEncryptedPassword(),
+                true, true, true, true, new ArrayList<>());
     }
 }
