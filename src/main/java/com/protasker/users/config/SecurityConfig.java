@@ -11,39 +11,28 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
-    private final Environment environment;
     private AppUserService usersService;
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
 
-    public SecurityConfig(Environment environment, AppUserService usersService) {
-        this.environment = environment;
+    public SecurityConfig(AppUserService usersService, BCryptPasswordEncoder passwordEncoder) {
         this.usersService = usersService;
-    }
-
-    @Autowired
-    public SecurityConfig(Environment environment) {
-        this.environment = environment;
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        String ipAddress = environment.getProperty("gateway.ip");
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http
                 .getSharedObject(AuthenticationManagerBuilder.class);
@@ -61,12 +50,10 @@ public class SecurityConfig {
                                     .requestMatchers(HttpMethod.POST, "/users").permitAll()
                                     .requestMatchers(HttpMethod.GET, "/users").permitAll()
                                     //todo: replace deprecated method
+                                    .anyRequest().authenticated()
                                     .and().addFilter(new AuthenticationFilter(authenticationManager)
                                             ).authenticationManager(authenticationManager);
-                        }
-//                        .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
-//                        .requestMatchers(HttpMethod.GET, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
-                );
+                        });
 
         http
                 .sessionManagement((sessionManagement ->
