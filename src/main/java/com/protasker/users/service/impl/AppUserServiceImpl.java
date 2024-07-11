@@ -12,7 +12,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AppUserServiceImpl implements AppUserService {
-
 
     private final AppUserRepository repository;
     private final ModelMapper mapper;
@@ -65,6 +63,16 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public void deleteUser(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public GetAppUserResponse getUserDetailsByEmail(String email) {
+        AppUser appUser = repository.findByEmail(email);
+        if (appUser == null) {
+            throw new UsernameNotFoundException(email);
+        }
+
+        return new ModelMapper().map(appUser, GetAppUserResponse.class);
     }
 
     @Override

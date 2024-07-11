@@ -16,4 +16,5 @@ public interface AppUserService extends UserDetailsService {
     List<GetAppUserResponse> getAllUsers();
 
     void deleteUser(Long id);
+    GetAppUserResponse getUserDetailsByEmail(String email);
 }

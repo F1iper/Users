@@ -3,7 +3,6 @@ package com.protasker.users.config;
 import com.protasker.users.login.filter.AuthenticationFilter;
 import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -14,22 +13,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private AppUserService usersService;
-    private PasswordEncoder passwordEncoder;
-
-
-    public SecurityConfig(AppUserService usersService, BCryptPasswordEncoder passwordEncoder) {
-        this.usersService = usersService;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final AppUserService usersService;
+    private final PasswordEncoder passwordEncoder;
+    private final Environment environment;
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -51,7 +45,7 @@ public class SecurityConfig {
                                     .requestMatchers(HttpMethod.GET, "/users").permitAll()
                                     //todo: replace deprecated method
                                     .anyRequest().authenticated()
-                                    .and().addFilter(new AuthenticationFilter(authenticationManager)
+                                    .and().addFilter(new AuthenticationFilter(authenticationManager, usersService, environment)
                                             ).authenticationManager(authenticationManager);
                         });
 
