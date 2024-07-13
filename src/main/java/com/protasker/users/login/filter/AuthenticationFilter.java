@@ -5,7 +5,6 @@ import com.protasker.users.login.LoginRequest;
 import com.protasker.users.response.GetAppUserResponse;
 import com.protasker.users.service.AppUserService;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

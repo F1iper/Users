@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +28,7 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        String ipAddress = environment.getProperty("gateway.ip");
         AuthenticationManagerBuilder authenticationManagerBuilder = http
                 .getSharedObject(AuthenticationManagerBuilder.class);
 
@@ -41,10 +42,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> {
                             authorize
-                                    .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                    .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + environment.getProperty("gateway.ip") + "')"))
+                                    .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + environment.getProperty("gateway.ip") + "')"))
+
                                     //todo: replace deprecated method
-                                    .anyRequest().authenticated()
                                     .and().addFilter(new AuthenticationFilter(authenticationManager, usersService, environment)
                                             ).authenticationManager(authenticationManager);
                         });
