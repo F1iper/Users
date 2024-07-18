@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,12 +27,17 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 
-@RequiredArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
-    private final AppUserService userService;
-    private final Environment environment;
+    private AuthenticationManager authenticationManager;
+    private AppUserService userService;
+    private Environment environment;
+
+    public AuthenticationFilter(AuthenticationManager authenticationManager, AppUserService userService, Environment environment) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+        this.environment = environment;
+    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {

@@ -40,19 +40,18 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         http
+                .addFilter(new AuthenticationFilter(authenticationManager, usersService, environment))
+                .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(authorize -> {
-                            authorize
-                                    .requestMatchers(HttpMethod.GET, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + environment.getProperty("gateway.ip") + "')"))
-                                    .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + environment.getProperty("gateway.ip") + "')"))
-
-                                    //todo: replace deprecated method
-                                    .and().addFilter(new AuthenticationFilter(authenticationManager, usersService, environment)
-                                            ).authenticationManager(authenticationManager);
-                        });
+                    authorize
+                            .requestMatchers(HttpMethod.GET, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
+                            .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
+                            .requestMatchers(HttpMethod.GET, "/login").permitAll();
+                });
 
         http
                 .sessionManagement((sessionManagement ->
-                                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 );
 
         return http.build();
