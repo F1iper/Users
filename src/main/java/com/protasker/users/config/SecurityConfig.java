@@ -37,19 +37,16 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-                .csrf(AbstractHttpConfigurer::disable);
-
-        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .addFilter(new AuthenticationFilter(authenticationManager, usersService, environment))
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(authorize -> {
                     authorize
                             .requestMatchers(HttpMethod.GET, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
-                            .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"))
-                            .requestMatchers(HttpMethod.GET, "/login").permitAll();
-                });
+                            .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/users").access(new WebExpressionAuthorizationManager("hasIpAddress('" + ipAddress + "')"));
 
-        http
+                })
                 .sessionManagement((sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 );

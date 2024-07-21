@@ -1,5 +1,6 @@
 package com.protasker.users.controller;
 
+import com.protasker.users.login.LoginRequest;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
 import com.protasker.users.response.GetAppUserResponse;
@@ -43,5 +44,10 @@ public class AppUserController {
     @GetMapping("/{id}")
     public ResponseEntity<GetAppUserResponse> getAppUserById (@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.FOUND).body(appUserService.getUserById(id));
+    }
+
+    @PostMapping("/login")
+    public void fakeLogin(@RequestBody LoginRequest loginRequest) {
+        throw new IllegalStateException("This should not be called bro");
     }
 }

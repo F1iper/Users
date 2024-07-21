@@ -7,6 +7,7 @@ import com.protasker.users.response.CreateAppUserResponse;
 import com.protasker.users.response.GetAppUserResponse;
 import com.protasker.users.service.AppUserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AppUserServiceImpl implements AppUserService {
@@ -77,10 +79,13 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Attempting to load user by username: " + username);
         AppUser appUserEntity = repository.findByEmail(username);
         if (appUserEntity == null) {
+            log.warn("User not found with email: " + username);
             throw new UsernameNotFoundException(username);
         }
+        log.info("User found: " + appUserEntity.getEmail());
         return new User(appUserEntity.getEmail(), appUserEntity.getEncryptedPassword(),
                 true, true, true, true, new ArrayList<>());
     }
