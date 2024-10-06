@@ -36,9 +36,12 @@ public class SecurityConfig {
 
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager, usersService, environment);
+        authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilter(new AuthenticationFilter(authenticationManager, usersService, environment))
+                .addFilter(authenticationFilter)
                 .authenticationManager(authenticationManager)
                 .authorizeHttpRequests(authorize -> {
                     authorize
