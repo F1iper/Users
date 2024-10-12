@@ -44,7 +44,6 @@ public class AppUserServiceImplTest {
                 .build();
 
         CreateAppUserResponse expectedResponse = CreateAppUserResponse.builder()
-                .id(1L)
                 .firstName("John")
                 .lastName("Doe")
                 .email("john.doe@example.com")
@@ -60,7 +59,6 @@ public class AppUserServiceImplTest {
         // then
         assertAll(
                 () -> assertThat(expectedResponse).isNotNull(),
-                () -> assertThat(expectedResponse.getId()).isEqualTo(1L),
                 () -> assertThat(expectedResponse.getFirstName()).isEqualTo("John"),
                 () -> assertThat(expectedResponse.getLastName()).isEqualTo("Doe"),
                 () -> assertThat(expectedResponse.getEmail()).isEqualTo("john.doe@example.com")
