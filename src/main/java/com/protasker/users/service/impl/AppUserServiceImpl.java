@@ -1,6 +1,7 @@
 package com.protasker.users.service.impl;
 
 import com.protasker.users.entity.AppUser;
+import com.protasker.users.exception.specific.UserAlreadyExistsException;
 import com.protasker.users.repository.AppUserRepository;
 import com.protasker.users.request.CreateAppUserRequest;
 import com.protasker.users.response.CreateAppUserResponse;
@@ -30,9 +31,15 @@ public class AppUserServiceImpl implements AppUserService {
     private final ModelMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
+    private final String USER_EMAIL_PREFIX = "User with email: ";
+    private final String USER_EMAIL_SUFFIX = " already exists";
 
     @Override
     public CreateAppUserResponse createUser(CreateAppUserRequest request) {
+        AppUser existingUser = repository.findByEmail(request.getEmail());
+        if (existingUser != null) {
+            throw new UserAlreadyExistsException(USER_EMAIL_PREFIX + request.getEmail() + USER_EMAIL_SUFFIX);
+        }
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         AppUser entity = mapper.map(request, AppUser.class);
